@@ -11,16 +11,17 @@ from mobile_seg.const import DATA_LFW_DIR, CACHE_DIR
 from mobile_seg.params import DataParams
 from mylib.albumentations.augmentations.transforms import MyCoarseDropout
 from mylib.pandas.cache import pd_cache
-
+import glob
 
 def _mask_to_img(mask_file: Path) -> Path:
     return DATA_LFW_DIR / f'raw/images/{mask_file.stem}.jpg'
 
 
-@pd_cache(CACHE_DIR, ext='.pqt')
+#@pd_cache(CACHE_DIR, ext='.pqt')
 def load_df():
-    mask_files = list(sorted(DATA_LFW_DIR.glob('**/*.ppm')))
-    img_files = list(map(_mask_to_img, mask_files))
+    mask_files = list(sorted(glob.glob('../data/raw/masks/*')))
+    print('mask_files', mask_files)
+    img_files = list(sorted([ mask.replace('jpg', 'ppm') for mask in mask_files]))
     return pd.DataFrame({
         'img_path': map(str, img_files),
         'mask_path': map(str, mask_files),
